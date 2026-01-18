@@ -1171,31 +1171,107 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card-list">
                     <div class="list-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: var(--bg-card); border-radius: 12px; margin-bottom: 1rem; border: 1px solid var(--border);">
                         <div>
-                            <div style="font-weight: bold; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.2rem;">Relatório Diário - Manutenção</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-calendar-day"></i> 18/01/2026 - Concluído</div>
+                            <div style="font-weight: bold; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.2rem;">Inventário de Equipamentos</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-industry"></i> Lista consolidada e status</div>
                         </div>
-                        <button class="btn btn-sm btn-secondary" style="padding: 0.6rem 1.2rem; border-radius: 8px;">Download</button>
+                        <button class="btn btn-sm btn-secondary btn-download-report" data-type="inventory" style="padding: 0.6rem 1.2rem; border-radius: 8px;">Gerar</button>
                     </div>
                     <div class="list-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: var(--bg-card); border-radius: 12px; margin-bottom: 1rem; border: 1px solid var(--border);">
                         <div>
-                            <div style="font-weight: bold; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.2rem;">Consumo de Energia Semanal</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-bolt"></i> 11/01 a 17/01 - Processado</div>
+                            <div style="font-weight: bold; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.2rem;">Histórico de Manutenções</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-hammer"></i> Registros técnicos de reparos</div>
                         </div>
-                        <button class="btn btn-sm btn-secondary" style="padding: 0.6rem 1.2rem; border-radius: 8px;">Download</button>
-                    </div>
-                    <div class="list-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: var(--bg-card); border-radius: 12px; margin-bottom: 1rem; border: 1px solid var(--border);">
-                        <div>
-                            <div style="font-weight: bold; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.2rem;">Status de Equipamentos (Mensal)</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-chart-line"></i> Dezembro 2025 - Arquivado</div>
-                        </div>
-                        <button class="btn btn-sm btn-secondary" style="padding: 0.6rem 1.2rem; border-radius: 8px;">Download</button>
+                        <button class="btn btn-sm btn-secondary btn-download-report" data-type="maintenance" style="padding: 0.6rem 1.2rem; border-radius: 8px;">Gerar</button>
                     </div>
                 </div>
             </div>
+            <div id="print-report-area" style="display: none;"></div>
         `;
 
-        document.getElementById('btn-export-pdf')?.addEventListener('click', () => {
-            alert('Gerando PDF... Esta funcionalidade será integrada ao backend em breve (Supabase Storage).');
+        const generatePDF = (type) => {
+            const printArea = document.getElementById('print-report-area');
+            let content = '';
+            const today = new Date().toLocaleDateString('pt-BR');
+
+            if (type === 'inventory' || type === 'full') {
+                content += `
+                    <div class="report-header">
+                        <h1 style="margin:0;">RELATÓRIO DE INVENTÁRIO TÉCNICO</h1>
+                        <p style="margin:5px 0;">Emissão: ${today} | Sistema: Smart Maintenance</p>
+                    </div>
+                    <h3>Lista de Ativos</h3>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Equipamento</th>
+                                <th>Modelo</th>
+                                <th>Marca</th>
+                                <th>Status</th>
+                                <th>Sensores</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${MOCK_EQUIPMENTS.map(eq => `
+                                <tr>
+                                    <td>${eq.name}</td>
+                                    <td>${eq.model}</td>
+                                    <td>${eq.brand}</td>
+                                    <td>${eq.status}</td>
+                                    <td>${(eq.sensors || []).length} sensores</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            if (type === 'maintenance' || type === 'full') {
+                content += `
+                    <div class="report-header" style="${type === 'full' ? 'margin-top:40px;' : ''}">
+                        <h1 style="margin:0;">HISTÓRICO DE MANUTENÇÕES</h1>
+                        ${type !== 'full' ? `<p style="margin:5px 0;">Emissão: ${today}</p>` : ''}
+                    </div>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Equipamento</th>
+                                <th>Descrição do Serviço</th>
+                                <th>Empresa</th>
+                                <th>Custo (R$)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${MOCK_MAINTENANCE_LOGS.map(log => {
+                    const eq = MOCK_EQUIPMENTS.find(e => String(e.id) === String(log.equipmentId)) || { name: 'N/A' };
+                    return `
+                                <tr>
+                                    <td>${new Date(log.date).toLocaleDateString('pt-BR')}</td>
+                                    <td>${eq.name}</td>
+                                    <td>${log.description}</td>
+                                    <td>${log.company}</td>
+                                    <td>${parseFloat(log.cost).toFixed(2)}</td>
+                                </tr>`;
+                }).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            content += `
+                <div class="report-footer">
+                    <p>Documento gerado eletronicamente por Smart Maintenance System</p>
+                    <p>© 2026 | Cacir Soluções Tecnológicas</p>
+                </div>
+            `;
+
+            printArea.innerHTML = content;
+            window.print();
+        };
+
+        document.getElementById('btn-export-pdf')?.addEventListener('click', () => generatePDF('full'));
+        document.querySelectorAll('.btn-download-report').forEach(btn => {
+            btn.addEventListener('click', () => generatePDF(btn.dataset.type));
         });
     }
 
