@@ -442,17 +442,74 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ... (Login Handlers kept concise) ...
     if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = loginForm.querySelector('button');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             const originalText = btn.innerText;
+
+            if (!window.SupaDB || !window.SupaDB.client) {
+                alert('Erro: Supabase não configurado corretamente.');
+                return;
+            }
+
             btn.innerText = 'Autenticando...';
-            setTimeout(() => {
+            btn.disabled = true;
+
+            try {
+                const { data, error } = await window.SupaDB.client.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+
                 isAuthenticated = true;
                 loginOverlay.classList.add('hidden');
-                btn.innerText = originalText;
+
+                // Fetch profiles for the name
+                const profile = await window.SupaDB.getProfile(data.user.id);
+                if (profile) document.getElementById('user-name').innerText = profile.full_name || email;
+
+                await syncDataFromSupabase();
                 loadView('dashboard');
-            }, 800);
+            } catch (err) {
+                alert('Erro no login: ' + err.message);
+                console.error(err);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
+    }
+
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = registerForm.querySelector('button');
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const role = document.getElementById('reg-role').value;
+            const originalText = btn.innerText;
+
+            btn.innerText = 'Cadastrando...';
+            btn.disabled = true;
+
+            try {
+                const { data, error } = await window.SupaDB.client.auth.signUp({
+                    email,
+                    password,
+                    options: { data: { full_name: name, role: role } }
+                });
+                if (error) throw error;
+
+                alert('Cadastro realizado! Verifique seu email ou tente fazer login.');
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } catch (err) {
+                alert('Erro no cadastro: ' + err.message);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
         });
     }
 
@@ -610,18 +667,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (useSupa) {
                     try {
                         const { data, error } = await window.SupaDB.equipments.create(equipData).select().single();
+                        if (error) throw error;
                         if (data) {
                             newId = data.id;
                             for (const s of sensors) {
-                                await window.SupaDB.sensors.create({
+                                const { error: sErr } = await window.SupaDB.sensors.create({
                                     equipment_id: newId,
                                     sensor_type: s.type,
                                     mqtt_id: s.mqttId,
                                     topic: s.topic
                                 });
+                                if (sErr) throw sErr;
                             }
                         }
-                    } catch (err) { console.error('Supabase insert error:', err); }
+                    } catch (err) {
+                        alert('Erro ao salvar no Supabase: ' + err.message);
+                        console.error('Supabase insert error:', err);
+                        return; // Stop execution, don't show success
+                    }
                 }
 
                 const newEq = { id: newId, ...equipData, sensors, inspectionItems: equipData.inspection_items };
@@ -1180,9 +1243,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div>
                             <div style="font-weight: bold; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.2rem;">Histórico de Manutenções</div>
                             <div style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-hammer"></i> Registros técnicos de reparos</div>
+                        </div>
+                        <button class="btn btn-sm btn-secondary btn-download-report" data-type="maintenance" style="padding: 0.6rem 1.2rem; border-radius: 8px;">Gerar</button>
+                    </div>
                 </div>
             </div>
-            <div id="print-report-area"></div>
         `;
 
         const generatePDF = (type) => {
