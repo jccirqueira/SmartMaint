@@ -1180,12 +1180,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div>
                             <div style="font-weight: bold; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.2rem;">Histórico de Manutenções</div>
                             <div style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-hammer"></i> Registros técnicos de reparos</div>
-                        </div>
-                        <button class="btn btn-sm btn-secondary btn-download-report" data-type="maintenance" style="padding: 0.6rem 1.2rem; border-radius: 8px;">Gerar</button>
-                    </div>
                 </div>
             </div>
-            <div id="print-report-area" style="display: none;"></div>
+            <div id="print-report-area"></div>
         `;
 
         const generatePDF = (type) => {
@@ -1266,7 +1263,12 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             printArea.innerHTML = content;
-            window.print();
+
+            // Give the browser a moment to render the content before opening the print dialog
+            setTimeout(() => {
+                window.print();
+                printArea.innerHTML = ''; // Clean up after
+            }, 250);
         };
 
         document.getElementById('btn-export-pdf')?.addEventListener('click', () => generatePDF('full'));

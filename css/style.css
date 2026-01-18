@@ -422,6 +422,7 @@ body.light-mode .login-overlay {
     }
 
     #print-report-area {
+        display: block !important;
         position: absolute;
         left: 0;
         top: 0;
