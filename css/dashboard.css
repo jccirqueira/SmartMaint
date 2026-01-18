@@ -1,0 +1,213 @@
+/* Dashboard specific styles */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.stat-card {
+    background: var(--bg-card);
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-info h3 {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.stat-info .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    opacity: 0.5;
+}
+
+.stat-card.alert .stat-icon {
+    color: var(--danger);
+}
+
+.stat-card.warning .stat-icon {
+    color: var(--warning);
+}
+
+.stat-card.success .stat-icon {
+    color: var(--success);
+}
+
+/* Equipment Grid */
+.equipment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.equipment-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    transition: transform 0.2s;
+}
+
+.equipment-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+}
+
+.equip-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25rem;
+}
+
+.equip-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.equip-info p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.status-badge.active {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--success);
+}
+
+.status-badge.maintenance {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+.equip-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.btn-icon:hover {
+    background: var(--border);
+    color: var(--text-primary);
+}
+
+/* IOT Monitor */
+.iot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.iot-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.iot-panel h3 {
+    width: 100%;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.gauge-container {
+    margin-bottom: 1rem;
+}
+
+.chart-container {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 0.5rem;
+}
+
+/* Checklist Cards (Added placeholder styles for checklist view) */
+.checklist-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.checklist-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.checklist-card:hover {
+    background: var(--bg-dark);
+}
+
+.cl-icon {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.cl-info {
+    flex: 1;
+}
+
+.cl-info h3 {
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+}
+
+.cl-info p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}

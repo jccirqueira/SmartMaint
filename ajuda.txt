@@ -1,0 +1,31 @@
+# Manual de Ajuda - Sistema Manutenção Inteligente
+
+## Visão Geral
+Este aplicativo foi desenvolvido para centralizar a gestão de manutenção de sua lanchonete ou cafeteria, focando em prevenção e conformidade com a Vigilância Sanitária.
+
+## Funcionalidades Principais
+
+### 1. Dashboard
+- **Visão Geral:** Visualize alertas críticos, manutenções pendentes e status dos equipamentos em tempo real.
+- **Atividade Recente:** Log das últimas ações realizadas.
+
+### 2. Meus Equipamentos
+- **Cadastro:** Registre equipamentos com detalhes como marca, modelo, data de compra e criticidade.
+- **Lista:** Visualize todos os equipamentos cadastrados e seus status (Ativo/Manutenção).
+- **Ações:** Edite informações ou visualize o histórico de cada item.
+
+### 3. Checklists Inteligentes
+- **Execução:** Realize checklists diários ou semanais para garantir o funcionamento correto e a higiene.
+- **Alertas Automáticos:** Se uma resposta indicar problema (ex: "Temperatura alta"), o sistema gera um alerta automaticamente.
+- **Feedback:** Receba confirmação imediata ou avisos de risco após finalizar.
+
+### 4. Monitoramento IOT (Tempo Real)
+- **Sensores:** Visualize leituras de temperatura/vibração de sensores conectados (Simulação MQTT).
+- **Gráficos:** Acompanhe a variação histórica para identificar tendências de falha.
+
+### 5. Manutenção e Alertas
+- **WhatsApp:** Alertas críticos são simulados no console (F12) e podem ser integrados à API oficial do WhatsApp.
+- **Preventiva:** O sistema avisa quando a data de manutenção preventiva se aproxima.
+
+## Suporte
+Para dúvidas técnicas ou suporte, contate o administrador do sistema.
